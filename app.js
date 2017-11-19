@@ -1,8 +1,10 @@
 const puppeteer = require('puppeteer');
 const emailurl = 'https://app.getnada.com/inbox/';
-const url = 'http://chn.ge/2AcQ40D';
-const NUM = 5;
-async function dos(){
+const url = process.argv[2];// YOUR PETITION SHARE URL
+const NUM = process.argv[3];// NUMBER OF SIGNINGS YOU WANT
+const first_name = 'test';
+const last_name = 'test';
+async function signPetitionOneTime(){
     const browser = await puppeteer.launch({headless: true});
     //GET A TEMP EMAIL
     const emailpage = await browser.newPage();
@@ -17,8 +19,6 @@ async function dos(){
     const page = await browser.newPage();
     await page.goto(url);
     await page.focus('#first_name');
-    const first_name = 'test';
-    const last_name = 'test';
     await page.keyboard.type(first_name, {delay: 100});
     page.keyboard.press('Tab');
     await page.keyboard.type(last_name, {delay: 100});
@@ -29,17 +29,18 @@ async function dos(){
     await page.keyboard.press('Space');
     await browser.close();
 }
-function test(i){
-    console.log(i);
+// the following code has been written to specifically run each signing in sequence
+// rather than in pararell
+function test(index){
+    console.log(index);
     return new Promise(resolve => {
-        dos().then( () => {
-            
+        signPetitionOneTime().then( () => {      
             resolve();
         });
     })
 }
 async function loop(){
-    for(let i=0;i<NUM;i++)
-        await test(i);
+    for(let index = 0;index < NUM;index++)
+        await test(index);
 };
 loop().then( () => {});
